@@ -9,7 +9,79 @@ Sockets Links.
  server .
 4. Send and receive the message using the send function in socket.
 ## PROGRAM
+Server.py
+```
+import socket
+import threading
+
+def handle_client(conn, addr):
+    print(f"Connected to {addr}")
+    
+    while True:
+        try:
+            data = conn.recv(1024).decode()
+            
+            if not data:
+                break
+            
+            print(f"Received from {addr}: {data}")
+            conn.send(f"Echo: {data}".encode())
+        
+        except:
+            break
+    
+    print(f"Connection closed with {addr}")
+    conn.close()
+
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+host = "127.0.0.1"
+port = 12345
+
+server.bind((host, port))
+server.listen(5)
+
+print("Server is running and waiting for connections...")
+
+while True:
+    conn, addr = server.accept()
+    
+    client_thread = threading.Thread(target=handle_client, args=(conn, addr))
+    client_thread.start()
+```
+Client.py
+
+```
+import socket
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+host = "127.0.0.1"
+port = 12345
+
+client.connect((host, port))
+
+print("Connected to server. Type 'exit' to quit.")
+
+while True:
+    message = input("Enter message: ")
+    
+    if message.lower() == "exit":
+        client.send("Client disconnected".encode())
+        break
+    
+    client.send(message.encode())
+    
+    response = client.recv(1024).decode()
+    print("Server says:", response)
+
+client.close()
+```
 ## OUPUT
+<img width="1176" height="220" alt="image" src="https://github.com/user-attachments/assets/25a1bef9-90d0-4732-a9d1-67ccf32add89" />
+<img width="1163" height="240" alt="image" src="https://github.com/user-attachments/assets/39e0c0ed-371e-425c-94f2-146a127212db" />
+
 ## RESULT
 Thus, the python program for creating Echo Client and Echo Server using TCP Sockets Links 
 was successfully created and executed.
